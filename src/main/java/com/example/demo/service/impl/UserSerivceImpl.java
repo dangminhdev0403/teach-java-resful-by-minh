@@ -2,7 +2,9 @@ package com.example.demo.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,7 @@ public class UserSerivceImpl implements UserService {
         Optional<User> optional = this.userRepository.findById(id);
         if (optional.isPresent()) {
             User userDb = optional.get();
-            
+
             userDb.setEmail(email);
             userDb.setName(name);
             userDb.setPassword(password);
@@ -70,5 +72,17 @@ public class UserSerivceImpl implements UserService {
 
         this.userRepository.deleteById(id);
     }
+
+    @Override
+    public User findByUsername(String username) throws UsernameNotFoundException {
+        User loginUser = new User();
+        
+            Optional<User> optional = this.userRepository.findByEmail(username);
+            loginUser = optional.isPresent() ? optional.get() : null;
+        
+        return loginUser;
+    }
+
+    
 
 }
