@@ -17,7 +17,7 @@ public class SercurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    private String[] routeList = { "/", "/auth/**" };
+    private String[] routeList = { "/**", "/auth/**" };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

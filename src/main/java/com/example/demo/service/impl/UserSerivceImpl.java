@@ -1,8 +1,7 @@
 package com.example.demo.service.impl;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.domain.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import com.example.demo.service.util.error.InValidEmailException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,8 +35,14 @@ public class UserSerivceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(User user) throws InValidEmailException {
+        String email = user.getEmail();
 
+        Optional<User> optional = this.userRepository.findByEmail(email);
+
+        if (optional.isPresent()) {
+            throw new InValidEmailException("Email đã tồn tại");
+        }
         return this.save(user);
     }
 
@@ -62,12 +68,6 @@ public class UserSerivceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> listUser = this.userRepository.findAll();
-        return listUser;
-    }
-
-    @Override
     public void deleteUser(Long id) {
 
         this.userRepository.deleteById(id);
@@ -76,13 +76,35 @@ public class UserSerivceImpl implements UserService {
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {
         User loginUser = new User();
-        
-            Optional<User> optional = this.userRepository.findByEmail(username);
-            loginUser = optional.isPresent() ? optional.get() : null;
-        
+
+        Optional<User> optional = this.userRepository.findByEmail(username);
+        loginUser = optional.isPresent() ? optional.get() : null;
+
         return loginUser;
     }
 
-    
+    @Override
+    public <T> Set<T> getAllUsers(Class<T> type) {
+        return this.userRepository.findAllBy(type);
+    }
+
+    @Override
+    public void updateRefreshToken(String email, String refreshToken) {
+
+        Optional<User> optional = this.userRepository.findByEmail(email);
+        if (optional.isPresent()) {
+            User user = optional.get();
+            user.setRefreshToken(refreshToken);
+            this.userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    @Override
+    public <T> Optional<T> getUserByRefreshTokenAndEmail(Class<T> type, String email, String refreshToken) {
+
+        return this.userRepository.findByEmailAndRefreshToken(type, email, refreshToken);
+    }
 
 }

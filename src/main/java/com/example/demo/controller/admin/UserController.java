@@ -1,6 +1,6 @@
 package com.example.demo.controller.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.model.User;
+import com.example.demo.domain.response.UserDTO;
 import com.example.demo.service.UserService;
+import com.example.demo.service.util.error.InValidEmailException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,17 +27,17 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("")
-    public ResponseEntity<User> createUser(@RequestBody User userFontend) {
-       
+    public ResponseEntity<User> createUser(@RequestBody User userFontend) throws InValidEmailException {
+
         User saveUser = this.userService.createUser(userFontend);
 
         return ResponseEntity.created(null).body(saveUser); // ! 201
     }
 
     @GetMapping("")
-    public ResponseEntity<List<User>> getListUser() {
+    public ResponseEntity<Set<UserDTO>> getListUser() {
 
-        List<User> listUsers = this.userService.getAllUsers();
+        Set<UserDTO> listUsers = this.userService.getAllUsers(UserDTO.class);
 
         return ResponseEntity.ok(listUsers);
     }
@@ -50,9 +53,17 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable long id) {
-       this.userService.deleteUser(id);
-       
+        this.userService.deleteUser(id);
+
         return ResponseEntity.ok("xoá thành công");
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<User> getUserByEmail(@RequestParam(value = "email") String email) {
+
+        User user = this.userService.findByUsername(email);
+
+        return ResponseEntity.ok(user);
     }
 
 }
