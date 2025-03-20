@@ -1,7 +1,11 @@
 package com.example.demo.controller.admin;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.model.User;
-import com.example.demo.domain.response.UserDTO;
+import com.example.demo.domain.specs.UserSpes;
 import com.example.demo.service.UserService;
 import com.example.demo.service.util.error.InValidEmailException;
 
@@ -35,9 +39,24 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Set<UserDTO>> getListUser() {
+    public ResponseEntity<List<User>> getListUser(
+            @RequestParam("name") Optional<String> name,
+            @RequestParam("email") Optional<String> email,
+            Pageable pageable) {
 
-        Set<UserDTO> listUsers = this.userService.getAllUsers(UserDTO.class);
+        String nameValue = name.orElse("");
+        String emailValue = email.orElse("");
+
+        // Page<UserDTO> pageUser = this.userService.getAllUsers(UserDTO.class,
+        // pageable);
+
+        Specification<User> specification = Specification.where(null);
+
+        specification = specification.and(UserSpes.likeName(nameValue)).and(UserSpes.emailLike(emailValue));
+
+        Page<User> pageUser = this.userService.getAllUsers(specification, pageable);
+
+        List<User> listUsers = pageUser.getContent();
 
         return ResponseEntity.ok(listUsers);
     }

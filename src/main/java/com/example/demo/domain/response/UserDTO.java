@@ -6,9 +6,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-//! Thêm mỗi  Builder thay vì Contructor
+// ! Thêm mỗi Builder thay vì Contructor
 @Builder
 public class UserDTO {
     private long id;
+    private String name;
     private String email;
 }

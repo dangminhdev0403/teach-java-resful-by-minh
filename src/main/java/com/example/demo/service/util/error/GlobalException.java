@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,16 +20,9 @@ import com.example.demo.domain.response.ResponseData;
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
+//! Tầng controller 
 @Slf4j(topic = "GlobalException")
 public class GlobalException {
-
-    private ResponseData<Object> createResponseData(int statusCode, String error, Exception ex) {
-
-        ResponseData<Object> data = ResponseData.<Object>builder().status(statusCode).data(null).error(error)
-                .message(ex.getMessage()).build();
-
-        return data;
-    }
 
     // !Ngoại lệ chung
     @ExceptionHandler(value = Exception.class)
@@ -80,6 +74,24 @@ public class GlobalException {
                 .message(errors).build();
 
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ResponseData<Object>> badCredentialsExceptio(BadCredentialsException ex) {
+
+        int statusCode = HttpStatus.BAD_REQUEST.value();
+
+        ResponseData<Object> data = createResponseData(statusCode, "Thông tin đăng nhập không đúng", ex);
+
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseData<Object> createResponseData(int statusCode, String error, Exception ex) {
+
+        ResponseData<Object> data = ResponseData.<Object>builder().status(statusCode).data(null).error(error)
+                .message(ex.getMessage()).build();
+
+        return data;
     }
 
 }

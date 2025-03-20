@@ -3,6 +3,9 @@ package com.example.demo.service.impl;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -86,6 +89,16 @@ public class UserSerivceImpl implements UserService {
     @Override
     public <T> Set<T> getAllUsers(Class<T> type) {
         return this.userRepository.findAllBy(type);
+    }
+
+    @Override
+    public <T> Page<T> getAllUsers(Class<T> type, Pageable pageable) {
+        return this.userRepository.findAllBy(type, pageable);
+    }
+
+    @Override
+    public Page<User> getAllUsers(Specification<User> specification, Pageable pageable) {
+        return this.userRepository.findAll(specification, pageable);
     }
 
     @Override
