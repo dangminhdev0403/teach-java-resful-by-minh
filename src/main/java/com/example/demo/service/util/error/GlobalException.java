@@ -1,6 +1,5 @@
 package com.example.demo.service.util.error;
 
-import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +16,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.example.demo.domain.response.ResponseData;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
-//! Tầng controller 
+// ! Tầng controller
 @Slf4j(topic = "GlobalException")
 public class GlobalException {
 
@@ -38,8 +38,8 @@ public class GlobalException {
 
     @ExceptionHandler(value = NoResourceFoundException.class)
     public ResponseEntity<ResponseData<Object>> noResourceFoundException(
-            NoResourceFoundException ex, HttpRequest request) {
-        String url = request.uri().toString();
+            NoResourceFoundException ex, HttpServletRequest request) {
+        String url = request.getRequestURI(); // Lấy URL từ HttpServletRequest
 
         int statusCode = HttpStatus.NOT_FOUND.value();
         String error = "Enpoint " + url + " khong ton tai";
