@@ -1,9 +1,12 @@
 package com.example.demo.domain.base;
 
+import java.time.Instant;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +28,12 @@ public abstract class BaseEntity {
     @NotBlank(message = "Name chua nhap")
     @NotBlank(message = "Name chua nhap")
     private String name;
+
+    private Instant createdAt;
+
+    @PrePersist
+    public void saveCreatedAt() {
+        this.createdAt = Instant.now();
+    }
 
 }

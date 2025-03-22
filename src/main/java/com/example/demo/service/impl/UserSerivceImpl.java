@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.model.Role;
 import com.example.demo.domain.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -45,6 +46,12 @@ public class UserSerivceImpl implements UserService {
 
         if (optional.isPresent()) {
             throw new InValidEmailException("Email đã tồn tại");
+        }
+
+        if (user.getRole() == null) {
+            Role role = new Role();
+            role.setId(3);
+            user.setRole(role);
         }
         return this.save(user);
     }

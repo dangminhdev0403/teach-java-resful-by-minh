@@ -3,6 +3,7 @@ package com.example.demo.service.util.error;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +85,16 @@ public class GlobalException {
         ResponseData<Object> data = createResponseData(statusCode, "Thông tin đăng nhập không đúng", ex);
 
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseData<Object>> badCredentialsExceptio(DataIntegrityViolationException ex) {
+
+        int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+
+        ResponseData<Object> data = createResponseData(statusCode, "Lỗi khoá ngoại", ex);
+
+        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseData<Object> createResponseData(int statusCode, String error, Exception ex) {
