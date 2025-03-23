@@ -58,6 +58,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
 
         // Route hợp lệ nhưng token không hợp lệ -> trả về 401
+
         int statusCode = HttpStatus.UNAUTHORIZED.value();
         response.setStatus(statusCode);
         ResponseData<Object> data = ResponseData.<Object>builder()
