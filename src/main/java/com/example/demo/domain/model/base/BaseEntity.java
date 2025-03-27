@@ -1,4 +1,4 @@
-package com.example.demo.domain.base;
+package com.example.demo.domain.model.base;
 
 import java.time.Instant;
 
@@ -25,7 +25,6 @@ public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank(message = "Name chua nhap")
     @NotBlank(message = "Name chua nhap")
     private String name;
 

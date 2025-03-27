@@ -57,7 +57,7 @@ public class JWTConfiguration {
                 return jwtDecoder.decode(token);
             } catch (Exception e) {
                 logger.error("JWT Decode Error: {}", e.getMessage(), e);
-                throw e;
+                throw  e;
             }
         };
     }

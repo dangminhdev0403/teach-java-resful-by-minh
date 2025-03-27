@@ -1,10 +1,14 @@
 package com.example.demo.domain.model;
 
-import com.example.demo.domain.base.BaseEntity;
+import java.util.List;
+
+import com.example.demo.domain.model.base.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -35,8 +39,9 @@ public class User extends BaseEntity {
     private String refreshToken;
 
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany
+    @JoinTable(name = "user_has_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+
+    private List<Role> roles;
 
 }

@@ -2,12 +2,13 @@ package com.example.demo.domain.model;
 
 import java.util.List;
 
-import com.example.demo.domain.base.BaseEntity;
+import com.example.demo.domain.model.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,12 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "roles")
 public class Role extends BaseEntity {
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private List<User> users;
+
+    @ManyToMany
+    @JoinTable(name = "role_has_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    @JsonIgnore
+    private List<Permission> permissions;
 }

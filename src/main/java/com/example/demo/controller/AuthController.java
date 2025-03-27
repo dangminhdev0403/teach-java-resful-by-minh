@@ -14,7 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+
 public class AuthController {
     private final UserService userService;
     private final SecurityUtils securityUtils;
@@ -171,6 +174,13 @@ public class AuthController {
 
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body("Đăng xuất thành công");
 
+    }
+
+    @PutMapping("path/{id}")
+    public String tesAddMethod(@PathVariable String id, @RequestBody String entity) {
+        // TODO: process PUT request
+
+        return entity;
     }
 
 }
