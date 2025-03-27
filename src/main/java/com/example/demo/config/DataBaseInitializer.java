@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
@@ -55,6 +56,38 @@ public class DataBaseInitializer implements CommandLineRunner {
     private void initializePermissions() {
         long countPermission = permissionRepository.count();
         long countEndpoints = handlerMapping.getHandlerMethods().size();
+
+        // Tập hợp tất cả các endpoint hiện có trong hệ thống Spring
+        Set<String> existingEndpoints = handlerMapping.getHandlerMethods().entrySet().stream()
+                .flatMap(entry -> {
+                    var requestMappingInfo = entry.getKey();
+                    var methods = requestMappingInfo.getMethodsCondition().getMethods();
+                    var patternsCondition = requestMappingInfo.getPathPatternsCondition();
+
+                    Method method = entry.getValue().getMethod();
+                    String apiDescription = method.getName();
+
+                    var patterns = (patternsCondition != null)
+                            ? patternsCondition.getPatterns()
+                            : Set.of(); // Tránh NullPointerException
+
+                    return methods.stream()
+                            .flatMap(m -> patterns.stream()
+                                    .map(pattern -> m.name() + ":" + pattern.toString()));
+                })
+                .collect(Collectors.toSet());
+
+        // Xóa các permissions không còn tồn tại trong Spring
+        List<Permission> permissionsToDelete = permissionRepository.findAll().stream()
+                .filter(permission -> !existingEndpoints.contains(permission.getMethod() + ":" + permission.getPath()))
+                .toList();
+
+        if (!permissionsToDelete.isEmpty()) {
+            permissionRepository.deleteAll(permissionsToDelete);
+            log.info("Deleted {} obsolete permissions.", permissionsToDelete.size());
+        }
+
+        // Thêm mới các permissions nếu thiếu
         if (countPermission != countEndpoints) {
             handlerMapping.getHandlerMethods().entrySet().stream()
                     .flatMap(entry -> {
@@ -63,10 +96,7 @@ public class DataBaseInitializer implements CommandLineRunner {
                         var patternsCondition = requestMappingInfo.getPathPatternsCondition();
 
                         Method method = entry.getValue().getMethod();
-
                         String apiDescription = method.getName();
-                        // String apiName = (apiDescription != null) ? apiDescription.value() :
-                        // method.getName();
 
                         var patterns = (patternsCondition != null)
                                 ? patternsCondition.getPatterns()
@@ -79,15 +109,11 @@ public class DataBaseInitializer implements CommandLineRunner {
                     .distinct()
                     .filter(permission -> permissionRepository.findByMethodAndPath(permission.getMethod(),
                             permission.getPath()) == null)
-                    .forEach(permission -> {
-                        permissionRepository.save(permission);
-                        // log.info("Added Permission: {} {}", permission.getMethod(),
-                        // permission.getUrl());
-                    });
+                    .forEach(permissionRepository :: save);
 
             log.info("Permissions initialized from endpoints!");
         } else {
-            log.info("Data is exists, skip initialization.");
+            log.info("Data is up to date, skipping initialization.");
         }
     }
 
