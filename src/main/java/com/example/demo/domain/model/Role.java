@@ -3,6 +3,7 @@ package com.example.demo.domain.model;
 import java.util.List;
 
 import com.example.demo.domain.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -22,6 +23,6 @@ import lombok.experimental.SuperBuilder;
 public class Role extends BaseEntity {
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<User> users;
 }
-

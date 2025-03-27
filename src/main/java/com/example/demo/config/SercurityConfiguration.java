@@ -12,34 +12,35 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 
 public class SercurityConfiguration {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    private String[] routeList = { "/admin/**" };
+        private String[] routeList = { "/admin/**" };
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint entryPoint)
-            throws Exception {
-        http
-                .csrf(c -> c.disable())
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authz ->
-                // prettier-ignore
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint entryPoint)
+                        throws Exception {
+                http
+                                .csrf(c -> c.disable())
+                                .cors(Customizer.withDefaults())
+                                .authorizeHttpRequests(authz ->
+                                // prettier-ignore
 
-                authz
-                        .requestMatchers(routeList).authenticated()
-                        .anyRequest().permitAll()
+                                authz
+                                                .requestMatchers(routeList).authenticated()
+                                                .anyRequest().permitAll()
 
-                )
-                // ! Khai báo JWT
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(entryPoint))
-                .formLogin(f -> f.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                                )
+                                // ! Khai báo JWT
+                                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
+                                                .authenticationEntryPoint(entryPoint))
+                                .formLogin(f -> f.disable())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
 }

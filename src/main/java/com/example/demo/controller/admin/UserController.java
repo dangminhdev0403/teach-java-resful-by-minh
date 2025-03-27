@@ -1,5 +1,6 @@
 package com.example.demo.controller.admin;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.specs.UserSpes;
@@ -34,8 +36,13 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User userFontend) throws InValidEmailException {
 
         User saveUser = this.userService.createUser(userFontend);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(saveUser.getId()) // Giả sử User có phương thức getId()
+                .toUri();
 
-        return ResponseEntity.created(null).body(saveUser); // ! 201
+        return ResponseEntity.created(location).body(saveUser); // ! 201
     }
 
     @GetMapping("")
@@ -47,8 +54,7 @@ public class UserController {
         String nameValue = name.orElse("");
         String emailValue = email.orElse("");
 
-        // Page<UserDTO> pageUser = this.userService.getAllUsers(UserDTO.class,
-        // pageable);
+        // Page<UserDTO> pageUser = this.userService.getAllUsers(UserDTO.class,pageable);
 
         Specification<User> specification = Specification.where(null);
 

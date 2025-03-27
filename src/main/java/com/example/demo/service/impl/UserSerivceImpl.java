@@ -85,13 +85,13 @@ public class UserSerivceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {
-        User loginUser = new User();
 
         Optional<User> optional = this.userRepository.findByEmail(username);
-        loginUser = optional.isPresent() ? optional.get() : null;
+        return optional.isPresent() ? optional.get() : null;
 
-        return loginUser;
     }
+
+
 
     @Override
     public <T> Set<T> getAllUsers(Class<T> type) {

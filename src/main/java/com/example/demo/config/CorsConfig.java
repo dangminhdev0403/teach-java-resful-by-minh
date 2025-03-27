@@ -13,14 +13,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class CorsConfig {
 
     @Value("${URL_FONTENT}")
-    String URL_FONTENT;
+    String urlFontend;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // mở cho các cổng kết nối
         configuration.setAllowedOrigins(Arrays.asList(
-                URL_FONTENT
+                urlFontend
 
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component("customAuthenticationEntryPoint")
-
+@SuppressWarnings("null")
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
@@ -71,7 +71,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.getWriter().write(objectMapper.writeValueAsString(data));
     }
 
+    @SuppressWarnings("null")
     private boolean isValidRoute(String uri) {
+
         Set<String> allRoutes = handlerMapping.getHandlerMethods()
                 .keySet()
                 .stream()
