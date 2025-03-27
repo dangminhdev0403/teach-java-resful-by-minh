@@ -64,9 +64,7 @@ public class DataBaseInitializer implements CommandLineRunner {
                     var methods = requestMappingInfo.getMethodsCondition().getMethods();
                     var patternsCondition = requestMappingInfo.getPathPatternsCondition();
 
-                    Method method = entry.getValue().getMethod();
-                    String apiDescription = method.getName();
-
+            
                     var patterns = (patternsCondition != null)
                             ? patternsCondition.getPatterns()
                             : Set.of(); // Tránh NullPointerException
