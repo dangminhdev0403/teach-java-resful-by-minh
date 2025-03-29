@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.example.demo.domain.anotation.ApiDescription;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.specs.UserSpes;
 import com.example.demo.service.UserService;
@@ -46,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping("")
+    @ApiDescription("Lấy danh sách người dùng")
     public ResponseEntity<List<User>> getListUser(
             @RequestParam("name") Optional<String> name,
             @RequestParam("email") Optional<String> email,
@@ -54,7 +56,8 @@ public class UserController {
         String nameValue = name.orElse("");
         String emailValue = email.orElse("");
 
-        // Page<UserDTO> pageUser = this.userService.getAllUsers(UserDTO.class,pageable);
+        // Page<UserDTO> pageUser =
+        // this.userService.getAllUsers(UserDTO.class,pageable);
 
         Specification<User> specification = Specification.where(null);
 
@@ -68,6 +71,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+
     public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody User userFontend) {
         User updateUser = this.userService.updateUser(id, userFontend);
         if (updateUser == null) {

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.domain.anotation.ApiDescription;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.request.LoginReq;
 import com.example.demo.domain.response.ResLoginDTO;
@@ -42,6 +43,8 @@ public class AuthController {
     private long refreshTokenExpiration;
 
     @PostMapping("/login")
+    @ApiDescription("Login user")
+
     public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginReq loginReq) {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -86,6 +89,7 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
+    @ApiDescription("Refresh token")
     public ResponseEntity<ResLoginDTO> getRefreshToken(
             @CookieValue(name = "refresh_token", required = false) String refreshToken)
             throws Exception {

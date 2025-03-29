@@ -1,5 +1,7 @@
 package com.example.demo.service.util;
 
+import java.lang.reflect.Method;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -8,6 +10,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import com.example.demo.domain.anotation.ApiDescription;
 import com.example.demo.domain.response.ResponseData;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,8 +37,12 @@ public class FormatResponse implements ResponseBodyAdvice {
             return body;
         }
 
+        Method method = returnType.getMethod();
+        ApiDescription apiDescription = method.getAnnotation(ApiDescription.class);
+        String messageApit = apiDescription == null ? "CALL API THÀNH CÔNG" : apiDescription.value();
+
         ResponseData<Object> data = ResponseData.<Object>builder().status(statusCode).data(body)
-                .message("CALL API THÀNH CÔNG").build();
+                .message(messageApit).build();
 
         return data;
     }

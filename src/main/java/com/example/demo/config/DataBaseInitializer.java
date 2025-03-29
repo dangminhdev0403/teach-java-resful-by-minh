@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.example.demo.domain.anotation.ApiDescription;
 import com.example.demo.domain.model.Permission;
 import com.example.demo.domain.model.Role;
 import com.example.demo.repository.PermissionRepository;
@@ -94,7 +95,9 @@ public class DataBaseInitializer implements CommandLineRunner {
                         var patternsCondition = requestMappingInfo.getPathPatternsCondition();
 
                         Method method = entry.getValue().getMethod();
-                        String apiDescription = method.getName();
+                   ApiDescription apiDescription = method.getAnnotation(ApiDescription.class);
+
+                        String description = apiDescription == null ?  method.getName(): apiDescription.value();
 
                         var patterns = (patternsCondition != null)
                                 ? patternsCondition.getPatterns()
@@ -102,7 +105,7 @@ public class DataBaseInitializer implements CommandLineRunner {
 
                         return methods.stream()
                                 .flatMap(m -> patterns.stream()
-                                        .map(pattern -> new Permission(apiDescription, m.name(), pattern.toString())));
+                                        .map(pattern -> new Permission(description, m.name(), pattern.toString())));
                     })
                     .distinct()
                     .filter(permission -> permissionRepository.findByMethodAndPath(permission.getMethod(),
